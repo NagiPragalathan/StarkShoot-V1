@@ -15,30 +15,34 @@ public class PlayerStatsUI : MonoBehaviour
         public int deaths;
     }
 
-    private List<PlayerStat> playerStats = new List<PlayerStat>
-    {
-        new PlayerStat { playerName = "Player1" },
-        new PlayerStat { playerName = "Player2" },
-        new PlayerStat { playerName = "Player3" },
-        new PlayerStat { playerName = "Player4" },
-        new PlayerStat { playerName = "Player5" }
-    };
+    private List<PlayerStat> playerStats = new List<PlayerStat>();
 
     void Start()
     {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        // Fetch data from PlayerStatsManager and populate playerStats list
+        foreach (var kvp in PlayerStatsManager.kills)
+        {
+            string playerName = kvp.Key;
+            int kills = kvp.Value;
+            int deaths = PlayerStatsManager.deaths.ContainsKey(playerName) ? PlayerStatsManager.deaths[playerName] : 0;
+
+            playerStats.Add(new PlayerStat
+            {
+                playerName = playerName,
+                kills = kills,
+                deaths = deaths
+            });
+        }
+
         PopulatePlayerStats();
     }
 
     void PopulatePlayerStats()
     {
-        System.Random rand = new System.Random();
-        for (int i = 0; i < playerStats.Count; i++)
+        foreach (PlayerStat stat in playerStats)
         {
-            PlayerStat stat = playerStats[i];
-            stat.kills = rand.Next(0, 100); // Random kills between 0 and 100
-            stat.deaths = rand.Next(0, 100); // Random deaths between 0 and 100
-            playerStats[i] = stat; // Update the list with the modified struct
-
             GameObject newEntry = Instantiate(playerStatPrefab, contentPanel);
             Text statText = newEntry.GetComponent<Text>();
             statText.text = $"{stat.playerName}: Kills: {stat.kills}, Deaths: {stat.deaths}";

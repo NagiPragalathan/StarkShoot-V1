@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
@@ -299,5 +300,16 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
         
         // Implement additional end-game logic here
+        ShowLeaderboard();
+    }
+
+    void ShowLeaderboard()
+    {
+        // Pass the killCounts and deathCounts data to the PlayerStatsManager
+        PlayerStatsManager.kills = new Dictionary<string, int>(killCounts);
+        PlayerStatsManager.deaths = new Dictionary<string, int>(deathCounts);
+
+        // Load the leaderboard scene
+        SceneManager.LoadScene("leaderboard");
     }
 }
